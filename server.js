@@ -5,67 +5,52 @@ const fs = require('fs');
 const port = process.env.PORT || 3000;
 var app = express();
 
-hbs.registerPartials(__dirname + '/views/partials');
+hbs.registerPartials(__dirname + '/views/partials')
 app.set('view engine', 'hbs');
 
 app.use((req, res, next) => {
-    var now = new Date().toString();
-    var log = `${now}: ${req.method} ${req.url}`;
+  var now = new Date().toString();
+  var log = `${now}: ${req.method} ${req.url}`;
 
-    console.log(log);
-    fs.appendFile('server.log',log + '\n', (err) => {
-        if(err) {
-            console.log('Unable to append server.log.');
-        }
-    });
-    next();
+  console.log(log);
+  fs.appendFile('server.log', log + '\n');
+  next();
 });
 
-app.use((req, res, next) => {
-
-    // res.render('maintenance.hbs', {
-    //     pageTitle: 'Maintenance Page',
-    //     maintenanceMessage: 'The site is currently being updated. We will be back soon!'
-    // });
-});
+// app.use((req, res, next) => {
+//   res.render('maintenance.hbs');
+// });
 
 app.use(express.static(__dirname + '/public'));
 
 hbs.registerHelper('getCurrentYear', () => {
-    return new Date().getFullYear();
+  return new Date().getFullYear();
 });
 
 hbs.registerHelper('screamIt', (text) => {
-    return text.toUpperCase();
-});
-
-app.get('/maintenance', (req, res) => {
-    res.render('maintenance.hbs', {
-        pageTitle: 'Maintenance Page',
-        maintenanceMessage: 'The site is currently being updated. We will be back soon!'
-    });
+  return text.toUpperCase();
 });
 
 app.get('/', (req, res) => {
-    res.render('home.hbs', {
-        pageTitle: 'Home page',
-        welcomeMessage: 'Welcome to this webpage!',
-        currentYear: new Date().getFullYear()
-    });
+  res.render('home.hbs', {
+    pageTitle: 'Home Page',
+    welcomeMessage: 'Welcome to my website'
+  });
 });
 
 app.get('/about', (req, res) => {
-    res.render('about.hbs', {
-        pageTitle: 'About Page'
-    });
+  res.render('about.hbs', {
+    pageTitle: 'About Page'
+  });
 });
 
+// /bad - send back json with errorMessage
 app.get('/bad', (req, res) => {
-    res.send({
-        errorMessage: 'Unable to handle request.'
-    });
+  res.send({
+    errorMessage: 'Unable to handle request'
+  });
 });
 
 app.listen(port, () => {
-    console.log(`Server is up on port ${port}`);
+  console.log(`Server is up on port ${port}`);
 });
